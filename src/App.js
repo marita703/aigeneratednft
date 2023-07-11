@@ -23,6 +23,11 @@ function App() {
     setProvider(provider);
   };
 
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    console.log("submitting...");
+  };
+
   useEffect(() => {
     loadBlockchainData();
   }, []);
@@ -31,7 +36,7 @@ function App() {
     <div>
       <Navigation account={account} setAccount={setAccount} />
       <div className="form">
-        <form>
+        <form onSubmit={submitHandler}>
           <input type="text" placeholder="Create a name..."></input>
           <input type="text" placeholder="Create a description..."></input>
           <input type="submit" value="Create and Mint"></input>
