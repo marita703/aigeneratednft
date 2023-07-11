@@ -37,7 +37,7 @@ function App() {
     const URL =
       "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2";
 
-    axios({
+    const response = await axios({
       url: URL,
       method: "POST",
       headers: {
