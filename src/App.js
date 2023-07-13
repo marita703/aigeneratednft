@@ -20,6 +20,7 @@ function App() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
+  const [url, setUrl] = useState(null);
 
   const loadBlockchainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -62,7 +63,24 @@ function App() {
     return data;
   };
 
-  const uploadImage = async (imageData) => {};
+  const uploadImage = async (imageData) => {
+    console.log("uploading image...");
+
+    const nftStorage = new NFTStorage({
+      token: process.env.REACT_APP_NFT_STORAGE_API_KEY,
+    });
+
+    //send request to store image
+
+    const { ipnft } = await nftStorage.store({
+      image: new File([imageData], "image.jpeg", { type: "image/jpeg" }),
+      name: name,
+      description: description,
+    });
+
+    const url = `https://ipfs.io/ipfs/${ipnft}/metadata.json`;
+    setUrl(url);
+  };
 
   useEffect(() => {
     loadBlockchainData();
