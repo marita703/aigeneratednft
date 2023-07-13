@@ -18,6 +18,7 @@ import config from "./config.json";
 function App() {
   const [provider, setProvider] = useState(null);
   const [account, setAccount] = useState(null);
+  const [nft, setNFT] = useState(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
@@ -29,11 +30,15 @@ function App() {
 
     const network = await provider.getNetwork();
 
+    //A contract needs, the address that we took from the config file (this also needs a network, that we get from the previous line of code), the ABI, that we imported as an NFT, and the provider, that is injcted by metamask at the begggining of this function.
     const nft = new ethers.Contract(
       config[network.chainId].nft.address,
       NFT,
       provider
     );
+    setNFT(nft);
+    const name = await nft.name();
+    console.log("name: " + name);
   };
 
   const submitHandler = async (e) => {
@@ -42,6 +47,9 @@ function App() {
     //upload Image to ipfs
     const url = await uploadImage(imageData);
     console.log("url: ", url);
+    //Mint NFT
+    await mintImage(url);
+    console.log("success");
   };
 
   const createImage = async () => {
@@ -97,6 +105,15 @@ function App() {
     return url;
   };
 
+  const mintImage = async (tokenURI) => {
+    console.log("waiting for minting image...");
+
+    const signer = await provider.getSigner();
+    const transaction = await nft
+      .connect(signer)
+      .mint(tokenURI, { value: ethers.utils.parseUnits("1", "ether") });
+    await transaction.wait();
+  };
   useEffect(() => {
     loadBlockchainData();
   }, []);
