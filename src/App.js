@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { NFTStorage, File } from "nft.storage";
+import { NFTStorage } from "nft.storage";
+//remember not to import file from NFT storage.
 import { Buffer } from "buffer";
 import { ethers } from "ethers";
 import axios from "axios";

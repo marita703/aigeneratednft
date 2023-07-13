@@ -47,7 +47,7 @@
   },
   "react-dotenv": {
     "whitelist": [
-      "API_URL"
+      "API_URLREACT_APP_NFT_STORAGE_API_KEY"
     ]
   },
   "devDependencies": {
