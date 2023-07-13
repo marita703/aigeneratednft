@@ -62,6 +62,8 @@ function App() {
     return data;
   };
 
+  const uploadImage = async (imageData) => {};
+
   useEffect(() => {
     loadBlockchainData();
   }, []);
