@@ -26,6 +26,14 @@ function App() {
   const loadBlockchainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
     setProvider(provider);
+
+    const network = await provider.getNetwork();
+
+    const nft = new ethers.Contract(
+      config[network.chainId].nft.address,
+      NFT,
+      provider
+    );
   };
 
   const submitHandler = async (e) => {
