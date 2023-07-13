@@ -23,6 +23,8 @@ function App() {
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const [URL, setURL] = useState(null);
+  const [isWaiting, setIsWaiting] = useState(false);
+  const [message, setMessage] = useState("");
 
   const loadBlockchainData = async () => {
     const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -43,17 +45,29 @@ function App() {
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
+    if (name === "" || description === "") {
+      window.alert("Please enter a name and description");
+      return;
+    }
+
+    setIsWaiting(true);
+
+    //Call AI API to genearete a image based on description
     const imageData = createImage();
     //upload Image to ipfs
     const url = await uploadImage(imageData);
     console.log("url: ", url);
     //Mint NFT
     await mintImage(url);
-    console.log("success");
+    console.log("success!!!");
+
+    setIsWaiting(false);
+    setMessage("");
   };
 
   const createImage = async () => {
-    console.log("creating image...");
+    setMessage("creating image...");
 
     const URL =
       "https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-2";
@@ -84,7 +98,7 @@ function App() {
   };
 
   const uploadImage = async (imageData) => {
-    console.log("uploading image...");
+    setMessage("uploading image...");
 
     // Create instance to NFT.Storage
     const nftstorage = new NFTStorage({
@@ -106,7 +120,7 @@ function App() {
   };
 
   const mintImage = async (tokenURI) => {
-    console.log("waiting for minting image...");
+    setMessage("waiting for minting image...");
 
     const signer = await provider.getSigner();
     const transaction = await nft
@@ -140,16 +154,27 @@ function App() {
           <input type="submit" value="Create and Mint"></input>
         </form>
         <div className="image">
-          <img src={image} alt="Ai generated images" />
+          {!isWaiting && image ? (
+            <img src={image} alt="Ai generated images" />
+          ) : isWaiting ? (
+            <div className="image__placeholder">
+              <Spinner animation="border" />
+              <p>{message}</p>
+            </div>
+          ) : (
+            <></>
+          )}
         </div>
       </div>
-      <p>
-        {" "}
-        View&nbsp;
-        <a href={URL} target="_blank" rel="noreferrer">
-          Metadata
-        </a>
-      </p>
+      {!isWaiting && URL && (
+        <p>
+          {" "}
+          View&nbsp;
+          <a href={URL} target="_blank" rel="noreferrer">
+            Metadata
+          </a>
+        </p>
+      )}
     </div>
   );
 }
